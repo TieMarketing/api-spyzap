@@ -26,12 +26,14 @@ export default async function handler(req, res) {
   try {
     // Sem import: usa fetch nativo
     const apiRes = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-host': 'whatsapp-data1.p.rapidapi.com',
-        'x-rapidapi-key': process.env.RAPIDAPI_KEY
-      }
-    });
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+    'X-RapidAPI-Host': 'whatsapp-data1.p.rapidapi.com',
+    'Accept': 'application/json'
+  }
+});
+
 
     const data = await apiRes.json();
     // Propaga status de erro do RapidAPI, se houver
