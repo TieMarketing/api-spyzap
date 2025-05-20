@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  console.log('▶ RAPIDAPI_KEY is set?', !!process.env.RAPIDAPI_KEY);
   // CORS (ajuste se quiser restringir)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
