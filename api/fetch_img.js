@@ -1,7 +1,10 @@
+// api/fetch_img.js
+import fetch from 'node-fetch';
+
 export default async function handler(req, res) {
-  // 1) CORS (ajuste o * para seu domínio em produção)
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -11,38 +14,32 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  let body;
-  try {
-    body = await new Promise((resolve, reject) => {
-      let data = '';
-      req.on('data', chunk => data += chunk);
-      req.on('end', () => resolve(JSON.parse(data)));
-      req.on('error', reject);
-    });
-  } catch (err) {
-    return res.status(400).json({ error: 'Invalid JSON' });
+  const { phone } = req.body;
+  if (!phone) {
+    return res.status(400).json({ error: 'Missing parameter: phone' });
   }
 
-  const phone = String(body.phone || '').replace(/\D/g, '');
-  if (phone.length < 10) {
+  const sanitized = phone.toString().replace(/\D/g, '');
+  if (sanitized.length < 10) {
     return res.status(400).json({ error: 'Invalid phone number' });
   }
 
-  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
-  if (!RAPIDAPI_KEY) {
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
-
-  const apiUrl = `https://whatsapp-data1.p.rapidapi.com/number/${phone}`;
+  const url = `https://whatsapp-data1.p.rapidapi.com/number/${sanitized}`;
   try {
-    const apiRes = await fetch(apiUrl, {
+    const apiRes = await fetch(url, {
       method: 'GET',
       headers: {
         'x-rapidapi-host': 'whatsapp-data1.p.rapidapi.com',
-        'x-rapidapi-key': RAPIDAPI_KEY
+        'x-rapidapi-key': process.env.RAPIDAPI_KEY
       }
     });
     const data = await apiRes.json();
+
+    if (!apiRes.ok) {
+      // repassa status e corpo de erro tal como vier do RapidAPI
+      return res.status(apiRes.status).json(data);
+    }
+
     return res.status(200).json(data);
   } catch (err) {
     console.error('RapidAPI error:', err);
