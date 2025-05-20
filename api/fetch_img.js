@@ -28,8 +28,8 @@ export default async function handler(req, res) {
     const apiRes = await fetch(url, {
   method: 'GET',
   headers: {
-    'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
-    'X-RapidAPI-Host': 'whatsapp-data1.p.rapidapi.com',
+    'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+    'x-rapidapi-host': 'whatsapp-data1.p.rapidapi.com',
     'Accept': 'application/json'
   }
 });
