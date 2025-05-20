@@ -1,8 +1,5 @@
-// api/fetch_img.js
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
-  // CORS
+  // CORS (ajuste se quiser restringir)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -26,6 +23,7 @@ export default async function handler(req, res) {
 
   const url = `https://whatsapp-data1.p.rapidapi.com/number/${sanitized}`;
   try {
+    // Sem import: usa fetch nativo
     const apiRes = await fetch(url, {
       method: 'GET',
       headers: {
@@ -33,10 +31,10 @@ export default async function handler(req, res) {
         'x-rapidapi-key': process.env.RAPIDAPI_KEY
       }
     });
-    const data = await apiRes.json();
 
+    const data = await apiRes.json();
+    // Propaga status de erro do RapidAPI, se houver
     if (!apiRes.ok) {
-      // repassa status e corpo de erro tal como vier do RapidAPI
       return res.status(apiRes.status).json(data);
     }
 
